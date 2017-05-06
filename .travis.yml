@@ -16,7 +16,7 @@ env:
     - PROJECT_DIR=$PWD
 install:
     - sudo apt-get update -y
-    - sudo apt-get -y install build-essential cmake libtool libwebp-dev unzip python-dev aptitude autoconf automake m4 nasm pkg-config libpng-dev libmagickwand-dev pngnq pngcrush
+    - sudo apt-get -y install build-essential cmake libtool libwebp-dev unzip python-dev aptitude autoconf automake m4 nasm pkg-config libpng-dev libmagickwand-dev pngnq pngcrush libjpeg62:i386
     - pip install setuptools
 
     # install openjpeg for jpeg2000 support
