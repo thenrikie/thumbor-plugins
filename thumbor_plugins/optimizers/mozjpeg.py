@@ -10,6 +10,7 @@
 
 import os
 import subprocess
+import re
 
 from thumbor.optimizers import BaseOptimizer
 from thumbor.utils import logger
@@ -29,9 +30,15 @@ class Optimizer(BaseOptimizer):
             self.runnable = False
 
     def should_run(self, image_extension, buffer):
-        return ('jpg' in image_extension or 'jpeg' in image_extension) and self.runnable
+        return ('mozjpeg' in self.context.request.filters) and self.runnable
 
     def optimize(self, buffer, input_file, output_file):
+        
+        mozjpeg = [filter for filter in self.context.request.filters.split(':') if filter.startswith('mozjpeg')]
+
+        if len(mozjpeg) > 0:
+            self.mozjpeg_level = re.search(r'\((.*?)\)', mozjpeg[0]).group(1)
+
         intermediary = output_file + '-intermediate'
         Image.open(input_file).save(intermediary, 'tga')
         command = '%s -quality %s -optimize %s > %s' % (
@@ -41,5 +48,6 @@ class Optimizer(BaseOptimizer):
             output_file,
         )
         with open(os.devnull) as null:
+            #
             logger.debug("[MOZJPEG] running: " + command)
             subprocess.call(command, shell=True, stdin=null)
